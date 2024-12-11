@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Strategy Heatmap</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .cell { stroke: #000; stroke-width: 1px; }
+        .axis text { font-size: 12px; }
+        .heatmap text { fill: #fff; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Blackjack Strategy Heatmap</h1>
+    <svg width="800" height="400"></svg>
+
+    <script>
+        // Sample heatmap data
+        const data = [
+            { score: 17, dealerCard: "10 or Face Card", win: 0.4, lose: 0.6 },
+            { score: 18, dealerCard: "Ace", win: 0.3, lose: 0.7 },
+            { score: 19, dealerCard: "Other", win: 0.5, lose: 0.5 },
+            // Add more rows here...
+        ];
+
+        const margin = { top: 30, right: 30, bottom: 70, left: 80 },
+              width = 800 - margin.left - margin.right,
+              height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.dealerCard))
+            .range([0, width])
+            .padding(0.05);
+
+        const y = d3.scaleBand()
+            .domain(data.map(d => d.score))
+            .range([height, 0])
+            .padding(0.05);
+
+        const color = d3.scaleSequential(d3.interpolateCool)
+            .domain([0, 1]);
+
+        svg.selectAll(".cell")
+            .data(data)
+            .join("rect")
+            .attr("x", d => x(d.dealerCard))
+            .attr("y", d => y(d.score))
+            .attr("width", x.bandwidth())
+            .attr("height", y.bandwidth())
+            .attr("fill", d => color(d.win))
+            .attr("class", "cell");
+
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).tickSize(0));
+
+        svg.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(y).tickSize(0));
+    </script>
+</body>
+</html>
