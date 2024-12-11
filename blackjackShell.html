@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player vs Dealer Scores</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .bar { cursor: pointer; }
+        .bar:hover { opacity: 0.7; }
+        .axis path, .axis line { fill: none; stroke: #000; }
+        .axis text { font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Player vs Dealer Scores</h1>
+    <svg width="800" height="400"></svg>
+
+    <script>
+        // Sample data (replace with your actual dataset)
+        d3.csv("black_jack_simulation_5_players_1000_decks.csv").then(data => {
+        // Convert numeric fields from strings to numbers
+        data.forEach(d => {
+            d.Score = +d.Score;
+            d.DealerScore = +d.DealerScore;
+        });
+
+        const svg = d3.select("svg"),
+              margin = { top: 20, right: 30, bottom: 40, left: 50 },
+              width = +svg.attr("width") - margin.left - margin.right,
+              height = +svg.attr("height") - margin.top - margin.bottom;
+
+        const x0 = d3.scaleBand()
+            .domain(data.map(d => d.player))
+            .rangeRound([0, width])
+            .paddingInner(0.1);
+
+        const x1 = d3.scaleBand()
+            .domain(["Player Score", "Dealer Score"])
+            .rangeRound([0, x0.bandwidth()])
+            .padding(0.05);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => Math.max(d.Score, d.DealerScore))]).nice()
+            .range([height, 0]);
+
+        const color = d3.scaleOrdinal()
+            .domain(["Player Score", "Dealer Score"])
+            .range(["steelblue", "orange"]);
+
+        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        g.append("g")
+            .selectAll("g")
+            .data(data)
+            .join("g")
+            .attr("transform", d => `translate(${x0(d.player)},0)`)
+            .selectAll("rect")
+            .data(d => [
+                { key: "Player Score", value: d.Score },
+                { key: "Dealer Score", value: d.DealerScore }
+            ])
+            .join("rect")
+            .attr("x", d => x1(d.key))
+            .attr("y", d => y(d.value))
+            .attr("width", x1.bandwidth())
+            .attr("height", d => height - y(d.value))
+            .attr("fill", d => color(d.key))
+            .attr("class", "bar");
+
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x0));
+
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("text")
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.32em")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+            .text("Score");
+    });
+    </script>
+</body>
+</html>
