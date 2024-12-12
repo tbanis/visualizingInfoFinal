@@ -3,68 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackjack Strategy Heatmap</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Visualization Documentation</title>
     <style>
-        .cell { stroke: #000; stroke-width: 1px; }
-        .axis text { font-size: 12px; }
-        .heatmap text { fill: #fff; font-size: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #ecf0f1;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        img {
+            display: block;
+            margin: 15px auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Blackjack Strategy Heatmap</h1>
-    <svg width="800" height="400"></svg>
-
-    <script>
-        // Sample heatmap data
-        const data = [
-            { score: 17, dealerCard: "10 or Face Card", win: 0.4, lose: 0.6 },
-            { score: 18, dealerCard: "Ace", win: 0.3, lose: 0.7 },
-            { score: 19, dealerCard: "Other", win: 0.5, lose: 0.5 },
-            // Add more rows here...
-        ];
-
-        const margin = { top: 30, right: 30, bottom: 70, left: 80 },
-              width = 800 - margin.left - margin.right,
-              height = 400 - margin.top - margin.bottom;
-
-        const svg = d3.select("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        const x = d3.scaleBand()
-            .domain(data.map(d => d.dealerCard))
-            .range([0, width])
-            .padding(0.05);
-
-        const y = d3.scaleBand()
-            .domain(data.map(d => d.score))
-            .range([height, 0])
-            .padding(0.05);
-
-        const color = d3.scaleSequential(d3.interpolateCool)
-            .domain([0, 1]);
-
-        svg.selectAll(".cell")
-            .data(data)
-            .join("rect")
-            .attr("x", d => x(d.dealerCard))
-            .attr("y", d => y(d.score))
-            .attr("width", x.bandwidth())
-            .attr("height", y.bandwidth())
-            .attr("fill", d => color(d.win))
-            .attr("class", "cell");
-
-        svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x).tickSize(0));
-
-        svg.append("g")
-            .attr("class", "axis")
-            .call(d3.axisLeft(y).tickSize(0));
-    </script>
+    <h1>Visualization Documentation</h1>
+    
+    <div>
+        <strong><h2>Design Process</h2></strong>
+        <p>My design process began with analysing the dataset to determine what questions it could answer and if I needed to make
+            any modifications to the dataset. The original dataset is attributed to Kaggle user Aiden Flynn and can be found
+            <a href="https://www.kaggle.com/datasets/flynn28/theoretical-black-jack-results">here</a>.</p>
+        <p>After choosing the dataset I began by doing some D3 demos to get a good feel for how the process worked. I'm used to working with CSS,HTML, and Javascript, however, it's not usually in a one page design. The first idea was a bar graph just showing player versus dealer scores.
+            <img src="Player vs Dealer Scores.png" alt="Player vs Dealer Scores" width="500" height="600">
+        I also created a simple Blackjack strategy heat map, but I did not like the way it looked and the direction it would have gone so I scrapped that idea.
+            <img src="Blackjack Strategy Heatmap.png" alt="Blackjack Heatmap" width="500" height="600">
+        I then created a couple of sketches to help guide my design process, creating a bar graph example and a pie chart example. I ended up with the bargraph because I felt it best illustrated the question I wanted an answer to with the data.
+            <img src="visSketch.jpg" alt="Sketches" width="500" height="600">
+        </p>    
+    </div>
+    <div>
+        <strong><h2>Design Rationale</h2></strong>
+        <p>
+            I ended up deciding on a bar graph because I felt it was the best way to display the information that I had chosen. The stacked bar graph was chosen because I had two distinct sets of data to compare, player vs dealer wins. I had initially thought I wanted to add a third column to show when the player and dealer tied, known as a push, but I felt that the graph would end up too cluttered and decided against including it. I chose to show each player's results to make the visualization more robust as only showing all players vs the dealer doesn't tell the entire story. I added buttons because I wanted the visualization to be more interactive. Color choice for each variable was chosen purely on how visually appealing the colors would be against the chosen background color. The background color was chosen to be easier on the eyes than a pure white background and the help the colors of the graph pop a bit more.   
+        </p>
+    </div>
+    <div>
+        <strong><h2>Question Answered</h2></strong>
+        <p>
+            There were a couple different questions I could have answered with the dataset I chose but the one I ended up choosing was to see what the wins rates were for the player vs the dealer based on the values of the first card delt. I was curious to see if there was a noticable impact on the result and therefore the decision making process based on the first card an individual saw.
+        </p>
+        <p>
+            When the first player card is a number the dealers win rate increases. I believe this is the case because the goal is to get the largest number possible to beat the dealer and not go over 21, known as a bust. A player delt a lower number will have to hit more to get a larger score, increasing the possibility of a bust.
+                <img src="playerNumber.png" alt="Player First Card Number" width="500" height="600">
+            When the first player card is 10 or Face card (Jack, Queen, King, or Ace), the player win rate increases. As the player is already that closer to 21 they are de-incentivized to hit as often, reducing the chance of a bust and leaving the only way for the dealer to win as having a larger number.
+                <img src="player10.png" alt="Player First Card Face or 10" width="500" height="600">
+            When the dealer's first card is a number, the player win rate increases. This shows that being delt a number card first, regardless of player or dealer, is the subopmtimal first card.
+                <img src="dealerNumber.png" alt="Dealer First Card Number" width="500" height="600">
+           When the dealer's first card is a 10 or Face card, the player win rate decreases slightly. This shows that being delt a 10 or Face card is the optimal first card.
+                <img src="dealer10.png" alt="Dealer First Card Face or 10" width="500" height="600">
+        </p>
+    </div>
 </body>
 </html>
