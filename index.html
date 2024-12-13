@@ -40,7 +40,8 @@
             max-width: 1000px;
             margin-bottom: 40px;
         }
-
+        
+        /* Button Styling */
         .button-container {
             display: flex;
             justify-content: center;
@@ -127,10 +128,12 @@
 <body>
     <h1>Player vs Dealer Win Rates in Blackjack</h1>
     <h3>Shows the win rate by player depending on what the first player or dealer card is during a game of Blackjack</h3>
+    <!-- Chart -->
     <div class="container">
         <div class="chart-container">
             <svg width="800" height="400"></svg>
         </div>
+        <!-- Button -->
         <div class="button-container">
             <div class="button-column">
                 <button id="faceOrTenBtn">First Player Card is Face or 10</button>
@@ -225,15 +228,15 @@
                     .attr("class", "axis")
                     .call(d3.axisLeft(y).ticks(null, "s"))
                     .append("text")
-                    .attr("x", -35)  // Position to the left of the axis
-                    .attr("y", -10)  // Raise the label a little higher
+                    .attr("x", -35)  
+                    .attr("y", -10)  
                     .attr("dy", "0.32em")
                     .attr("fill", "#000")
                     .attr("font-weight", "bold")
                     .attr("text-anchor", "start")
                     .text("Win Count");
 
-                // X-axis label
+                
                 g.append("text")
                     .attr("class", "axis-label")
                     .attr("x", width / 2)
@@ -256,7 +259,7 @@
 
             document.getElementById("numberBtn").addEventListener("click", () => {
                 filteredData = data.filter(d => 
-                    !["J", "K", "Q", "A"].includes(d.PlayerCard) && (d.Score > d.DealerScore)
+                    !["J", "K", "Q", "A", "10"].includes(d.PlayerCard) && (d.Score > d.DealerScore)
                 );
                 renderChart(filteredData);
             });
@@ -270,7 +273,7 @@
 
             document.getElementById("dealerNumberBtn").addEventListener("click", () => {
                 filteredData = data.filter(d => 
-                    !["J", "K", "Q", "A"].includes(d.DealerCard) && (d.Score > d.DealerScore)
+                    !["J", "K", "Q", "A", "10"].includes(d.DealerCard) && (d.Score > d.DealerScore)
                 );
                 renderChart(filteredData);
             });
